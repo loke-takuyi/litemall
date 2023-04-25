@@ -18,4 +18,17 @@ public class UserTokenManager {
     	}
         return userId;
     }
+
+    public static String generateToken(Integer id, Integer userLevel) {
+        JwtHelper jwtHelper = new JwtHelper();
+        return jwtHelper.createToken(id, userLevel);
+    }
+    public static Integer getUserLevel(String token) {
+        JwtHelper jwtHelper = new JwtHelper();
+        Integer userLevel = jwtHelper.verifyTokenAndGetUserLevel(token);
+        if(userLevel == null ){
+            return null;
+        }
+        return userLevel;
+    }
 }

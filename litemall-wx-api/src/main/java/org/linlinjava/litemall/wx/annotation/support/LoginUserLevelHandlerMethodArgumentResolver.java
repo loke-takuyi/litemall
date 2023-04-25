@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.wx.annotation.support;
 
-import org.linlinjava.litemall.wx.annotation.LoginUser;
+import org.linlinjava.litemall.wx.annotation.LoginUserLevel;
 import org.linlinjava.litemall.wx.service.UserTokenManager;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -9,12 +9,12 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 
-public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
+public class LoginUserLevelHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
     public static final String LOGIN_TOKEN_KEY = "X-Litemall-Token";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().isAssignableFrom(Integer.class) && parameter.hasParameterAnnotation(LoginUser.class);
+        return parameter.getParameterType().isAssignableFrom(Integer.class) && parameter.hasParameterAnnotation(LoginUserLevel.class);
     }
 
     @Override
@@ -26,6 +26,6 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
             return null;
         }
 
-        return UserTokenManager.getUserId(token);
+        return UserTokenManager.getUserLevel(token);
     }
 }

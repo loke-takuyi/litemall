@@ -54,6 +54,37 @@ public class JwtHelper {
 		}
 		return null;
 	}
+
+	public String createToken(Integer userId, Integer userLevel) {
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(SECRET);
+			Map<String, Object> map = new HashMap<String, Object>();
+			Date nowDate = new Date();
+			// 过期时间：2小时
+			Date expireDate = getAfterDate(nowDate,0,0,0,2,0,0);
+			map.put("alg", "HS256");
+			map.put("typ", "JWT");
+			String token = JWT.create()
+					// 设置头部信息 Header
+					.withHeader(map)
+					// 设置 载荷 Payload
+					.withClaim("userId", userId)
+					.withClaim("userLevel", userLevel)
+					.withIssuer(ISSUSER)
+					.withSubject(SUBJECT)
+					.withAudience(AUDIENCE)
+					// 生成签名的时间
+					.withIssuedAt(nowDate)
+					// 签名过期的时间
+					.withExpiresAt(expireDate)
+					// 签名 Signature
+					.sign(algorithm);
+			return token;
+		} catch (JWTCreationException exception){
+			exception.printStackTrace();
+		}
+		return null;
+	}
 	
 	public Integer verifyTokenAndGetUserId(String token) {
 		try {
@@ -63,12 +94,29 @@ public class JwtHelper {
 		        .build();
 		    DecodedJWT jwt = verifier.verify(token);
 		    Map<String, Claim> claims = jwt.getClaims();
-		    Claim claim = claims.get("userId");
+		    Claim claim = claims.get("userLevel");
 		    return claim.asInt();
 		} catch (JWTVerificationException exception){
 //			exception.printStackTrace();
 		}
 		
+		return 0;
+	}
+
+	public Integer verifyTokenAndGetUserLevel(String token) {
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(SECRET);
+			JWTVerifier verifier = JWT.require(algorithm)
+					.withIssuer(ISSUSER)
+					.build();
+			DecodedJWT jwt = verifier.verify(token);
+			Map<String, Claim> claims = jwt.getClaims();
+			Claim claim = claims.get("userId");
+			return claim.asInt();
+		} catch (JWTVerificationException exception){
+//			exception.printStackTrace();
+		}
+
 		return 0;
 	}
 	
@@ -100,5 +148,6 @@ public class JwtHelper {
 		}
 		return cal.getTime();
 	}
-	
+
+
 }
