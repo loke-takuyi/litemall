@@ -5,10 +5,15 @@ import org.linlinjava.litemall.db.dao.GoodsProductMapper;
 import org.linlinjava.litemall.db.dao.LitemallGoodsProductMapper;
 import org.linlinjava.litemall.db.domain.LitemallGoodsProduct;
 import org.linlinjava.litemall.db.domain.LitemallGoodsProductExample;
+import org.linlinjava.litemall.db.domain.LitemallGoodsProductVo;
+import org.linlinjava.litemall.db.enums.UserLevelEnum;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +27,31 @@ public class LitemallGoodsProductService {
         LitemallGoodsProductExample example = new LitemallGoodsProductExample();
         example.or().andGoodsIdEqualTo(gid).andDeletedEqualTo(false);
         return litemallGoodsProductMapper.selectByExample(example);
+    }
+
+    public List<LitemallGoodsProductVo> queryVoByGid(Integer gid, Integer userLevel) {
+        List<LitemallGoodsProduct> goodsProducts = queryByGid(gid);
+        if (CollectionUtils.isEmpty(goodsProducts)){
+            return null;
+        }
+        ArrayList<LitemallGoodsProductVo> productVos = new ArrayList<>();
+        goodsProducts.forEach(goodsProduct -> {
+            LitemallGoodsProductVo goodsProductVo = new LitemallGoodsProductVo();
+            BeanUtils.copyProperties(goodsProduct, goodsProductVo);
+            if (UserLevelEnum.tag_user.code.equals(userLevel)){
+                goodsProductVo.setPrice(goodsProduct.getTagPrice());
+            }
+            if (UserLevelEnum.retail_user.code.equals(userLevel)){
+                goodsProductVo.setPrice(goodsProduct.getRetailPrice());
+            }
+            if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
+                goodsProductVo.setPrice(goodsProduct.getWholesalePrice());
+            }
+
+        });
+
+        return productVos;
+
     }
 
     public LitemallGoodsProduct findById(Integer id) {
