@@ -94,7 +94,7 @@ public class JwtHelper {
 		        .build();
 		    DecodedJWT jwt = verifier.verify(token);
 		    Map<String, Claim> claims = jwt.getClaims();
-		    Claim claim = claims.get("userLevel");
+		    Claim claim = claims.get("userId");
 		    return claim.asInt();
 		} catch (JWTVerificationException exception){
 //			exception.printStackTrace();
@@ -111,7 +111,7 @@ public class JwtHelper {
 					.build();
 			DecodedJWT jwt = verifier.verify(token);
 			Map<String, Claim> claims = jwt.getClaims();
-			Claim claim = claims.get("userId");
+			Claim claim = claims.get("userLevel");
 			return claim.asInt();
 		} catch (JWTVerificationException exception){
 //			exception.printStackTrace();

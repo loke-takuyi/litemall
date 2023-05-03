@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LitemallGoodsProductService {
@@ -37,8 +38,9 @@ public class LitemallGoodsProductService {
         ArrayList<LitemallGoodsProductVo> productVos = new ArrayList<>();
         goodsProducts.forEach(goodsProduct -> {
             LitemallGoodsProductVo goodsProductVo = new LitemallGoodsProductVo();
+            productVos.add(goodsProductVo);
             BeanUtils.copyProperties(goodsProduct, goodsProductVo);
-            if (UserLevelEnum.tag_user.code.equals(userLevel)){
+            if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
                 goodsProductVo.setPrice(goodsProduct.getTagPrice());
             }
             if (UserLevelEnum.retail_user.code.equals(userLevel)){

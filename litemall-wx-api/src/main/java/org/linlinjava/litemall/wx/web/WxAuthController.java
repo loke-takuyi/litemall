@@ -165,7 +165,7 @@ public class WxAuthController {
         }
 
         // token
-        String token = UserTokenManager.generateToken(user.getId());
+        String token = UserTokenManager.generateToken(user.getId(), Integer.valueOf(user.getUserLevel()));
 
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);
