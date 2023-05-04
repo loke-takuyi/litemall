@@ -158,13 +158,22 @@ public class AdminGoodsService {
 
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
+        BigDecimal tagPrice = new BigDecimal(Integer.MAX_VALUE);
+        BigDecimal wholesalePrice = new BigDecimal(Integer.MAX_VALUE);
         for (LitemallGoodsProduct product : products) {
-            BigDecimal productPrice = product.getPrice();
-            if(retailPrice.compareTo(productPrice) == 1){
-                retailPrice = productPrice;
+            if(retailPrice.compareTo(product.getRetailPrice()) == 1){
+                retailPrice = product.getRetailPrice();
+            }
+            if (tagPrice.compareTo(product.getTagPrice()) == 1){
+                tagPrice = product.getTagPrice();
+            }
+            if (wholesalePrice.compareTo(product.getWholesalePrice()) == 1){
+                wholesalePrice = product.getWholesalePrice();
             }
         }
         goods.setRetailPrice(retailPrice);
+        goods.setTagPrice(tagPrice);
+        goods.setWholesalePrice(wholesalePrice);
         
         // 商品基本信息表litemall_goods
         if (goodsService.updateById(goods) == 0) {
@@ -247,13 +256,22 @@ public class AdminGoodsService {
 
         // 商品表里面有一个字段retailPrice记录当前商品的最低价
         BigDecimal retailPrice = new BigDecimal(Integer.MAX_VALUE);
+        BigDecimal tagPrice = new BigDecimal(Integer.MAX_VALUE);
+        BigDecimal wholesalePrice = new BigDecimal(Integer.MAX_VALUE);
         for (LitemallGoodsProduct product : products) {
-            BigDecimal productPrice = product.getPrice();
-            if(retailPrice.compareTo(productPrice) == 1){
-                retailPrice = productPrice;
+            if(retailPrice.compareTo(product.getRetailPrice()) == 1){
+                retailPrice = product.getRetailPrice();
+            }
+            if (tagPrice.compareTo(product.getTagPrice()) == 1){
+                tagPrice = product.getTagPrice();
+            }
+            if (wholesalePrice.compareTo(product.getWholesalePrice()) == 1){
+                wholesalePrice = product.getWholesalePrice();
             }
         }
         goods.setRetailPrice(retailPrice);
+        goods.setTagPrice(tagPrice);
+        goods.setWholesalePrice(wholesalePrice);
 
         // 商品基本信息表litemall_goods
         goodsService.add(goods);
