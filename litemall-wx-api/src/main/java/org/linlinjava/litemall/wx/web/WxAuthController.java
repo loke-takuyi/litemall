@@ -3,6 +3,7 @@ package org.linlinjava.litemall.wx.web;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.linlinjava.litemall.core.notify.NotifyService;
@@ -23,7 +24,6 @@ import org.linlinjava.litemall.wx.service.CaptchaCodeManager;
 import org.linlinjava.litemall.wx.service.UserTokenManager;
 import org.linlinjava.litemall.core.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -166,6 +166,11 @@ public class WxAuthController {
 
         // token
         String token = UserTokenManager.generateToken(user.getId(), Integer.valueOf(user.getUserLevel()));
+
+        //判断是否需要绑定手机号
+        if (StringUtils.isBlank(user.getMobile())){
+            userInfo.setNeedBindMobile(true);
+        }
 
         Map<Object, Object> result = new HashMap<Object, Object>();
         result.put("token", token);

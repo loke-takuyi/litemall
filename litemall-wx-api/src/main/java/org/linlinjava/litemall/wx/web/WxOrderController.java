@@ -114,8 +114,19 @@ public class WxOrderController {
      * @param response 响应内容
      * @return 操作结果
      */
-    @PostMapping("pay-notify")
-    public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
+//    @PostMapping("pay-notify")
+//    public Object payNotify(HttpServletRequest request, HttpServletResponse response) {
+//        return wxOrderService.payNotify(request, response);
+//    }
+
+    /**
+     * 隐藏微信回调地址
+     * @param request
+     * @param response
+     * @return
+     */
+    @PostMapping("pay-notify-secret")
+    public Object payNotifyP(HttpServletRequest request, HttpServletResponse response) {
         return wxOrderService.payNotify(request, response);
     }
 

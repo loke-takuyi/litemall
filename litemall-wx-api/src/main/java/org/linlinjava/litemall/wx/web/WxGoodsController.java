@@ -8,6 +8,7 @@ import org.linlinjava.litemall.core.util.ResponseUtil;
 import org.linlinjava.litemall.core.validator.Order;
 import org.linlinjava.litemall.core.validator.Sort;
 import org.linlinjava.litemall.db.domain.*;
+import org.linlinjava.litemall.db.enums.UserLevelEnum;
 import org.linlinjava.litemall.db.service.*;
 import org.linlinjava.litemall.wx.annotation.LoginUser;
 import org.linlinjava.litemall.wx.annotation.LoginUserLevel;
@@ -20,10 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -94,6 +92,12 @@ public class WxGoodsController {
 	public Object detail(@LoginUser Integer userId, @LoginUserLevel Integer userLevel, @NotNull Integer id) {
 		// 商品信息
 		LitemallGoods info = goodsService.findById(id);
+		if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
+			info.setRetailPrice(info.getTagPrice());
+		}
+		if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
+			info.setRetailPrice(info.getWholesalePrice());
+		}
 
 		// 商品属性
 		Callable<List> goodsAttributeListCallable = () -> goodsAttributeService.queryByGid(id);
