@@ -1,6 +1,8 @@
 package org.linlinjava.litemall.wx.annotation.support;
 
 import org.linlinjava.litemall.wx.annotation.LoginUser;
+import org.linlinjava.litemall.wx.config.UserThreadLocal;
+import org.linlinjava.litemall.wx.dto.SysUser;
 import org.linlinjava.litemall.wx.service.UserTokenManager;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -25,7 +27,8 @@ public class LoginUserHandlerMethodArgumentResolver implements HandlerMethodArgu
         if (token == null || token.isEmpty()) {
             return null;
         }
-
-        return UserTokenManager.getUserId(token);
+        SysUser sysUser = UserTokenManager.getSysUser(token);
+        UserThreadLocal.put(sysUser);
+        return sysUser.getUserId();
     }
 }

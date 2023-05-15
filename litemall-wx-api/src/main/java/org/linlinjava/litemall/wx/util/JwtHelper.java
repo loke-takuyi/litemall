@@ -13,6 +13,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import org.linlinjava.litemall.wx.dto.SysUser;
 
 public class JwtHelper {
 	// 秘钥
@@ -101,6 +102,25 @@ public class JwtHelper {
 		}
 		
 		return 0;
+	}
+
+	public SysUser getSysUser(String token) {
+		try {
+			Algorithm algorithm = Algorithm.HMAC256(SECRET);
+			JWTVerifier verifier = JWT.require(algorithm)
+					.withIssuer(ISSUSER)
+					.build();
+			DecodedJWT jwt = verifier.verify(token);
+			Map<String, Claim> claims = jwt.getClaims();
+			SysUser sysUser = new SysUser();
+			sysUser.setUserId(claims.get("userId").asInt());
+			sysUser.setUserLevel(claims.get("userLevel").asInt());
+			return sysUser;
+		} catch (JWTVerificationException exception){
+//			exception.printStackTrace();
+		}
+
+		return null;
 	}
 
 	public Integer verifyTokenAndGetUserLevel(String token) {

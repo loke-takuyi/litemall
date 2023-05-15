@@ -1,5 +1,6 @@
 package org.linlinjava.litemall.wx.service;
 
+import org.linlinjava.litemall.wx.dto.SysUser;
 import org.linlinjava.litemall.wx.util.JwtHelper;
 
 /**
@@ -30,5 +31,14 @@ public class UserTokenManager {
             return null;
         }
         return userLevel;
+    }
+
+    public static SysUser getSysUser(String token){
+        JwtHelper jwtHelper = new JwtHelper();
+        SysUser sysUser = jwtHelper.getSysUser(token);
+        if (sysUser == null || sysUser.getUserId() == null){
+            return null;
+        }
+        return sysUser;
     }
 }
