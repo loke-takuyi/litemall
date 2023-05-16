@@ -1008,6 +1008,8 @@ public class LitemallGoods {
         deleted("deleted", "deleted", "BIT", false),
         tagPrice("tag_price", "tagPrice", "DECIMAL", false),
         wholesalePrice("wholesale_price", "wholesalePrice", "DECIMAL", false),
+        tagPriceToRetailPrice("tag_price as retail_price", "retail_price", "DECIMAL", false),
+        wholesalePriceToRetailPrice("wholesale_price as retail_price", "retail_price", "DECIMAL", false),
         detail("detail", "detail", "LONGVARCHAR", false);
 
         /**
