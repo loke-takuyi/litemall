@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.wx.service;
 
-import org.linlinjava.litemall.wx.dto.SysUser;
+import org.linlinjava.litemall.db.config.SysUser;
 import org.linlinjava.litemall.wx.util.JwtHelper;
 
 /**

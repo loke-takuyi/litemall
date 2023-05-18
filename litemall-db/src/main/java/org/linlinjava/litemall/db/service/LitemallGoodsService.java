@@ -1,10 +1,13 @@
 package org.linlinjava.litemall.db.service;
 
 import com.github.pagehelper.PageHelper;
+import org.linlinjava.litemall.db.config.SysUser;
+import org.linlinjava.litemall.db.config.WxUserThreadLocal;
 import org.linlinjava.litemall.db.dao.LitemallGoodsMapper;
 import org.linlinjava.litemall.db.domain.LitemallGoods;
 import org.linlinjava.litemall.db.domain.LitemallGoods.Column;
 import org.linlinjava.litemall.db.domain.LitemallGoodsExample;
+import org.linlinjava.litemall.db.enums.UserLevelEnum;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -13,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class LitemallGoodsService {
@@ -32,8 +36,32 @@ public class LitemallGoodsService {
         example.or().andIsHotEqualTo(true).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
         example.setOrderByClause("add_time desc");
         PageHelper.startPage(offset, limit);
-
         return goodsMapper.selectByExampleSelective(example, columns);
+    }
+
+    /**
+     * 根据上下文中的userLevel，用户等级，判断取不同的价格字段
+     * @return
+     */
+    private Column[] getCovertColumns(){
+        SysUser sysUser = WxUserThreadLocal.get();
+        int length = columns.length;
+        Column[] covertColumns = new Column[length];
+        System.arraycopy(columns, 0, covertColumns, 0, length);
+        covertColumns[length - 1] = getCovertColumn(sysUser.getUserLevel());
+        return covertColumns;
+    }
+
+
+    private Column getCovertColumn(Integer userLevel) {
+
+        if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
+            return Column.tagPriceToRetailPrice;
+        }
+        if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
+            return Column.wholesalePriceToRetailPrice;
+        }
+        return Column.retailPrice;
     }
 
     /**

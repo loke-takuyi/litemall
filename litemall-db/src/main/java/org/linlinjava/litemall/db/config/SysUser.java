@@ -1,4 +1,4 @@
-package org.linlinjava.litemall.wx.dto;
+package org.linlinjava.litemall.db.config;
 
 public class SysUser {
 

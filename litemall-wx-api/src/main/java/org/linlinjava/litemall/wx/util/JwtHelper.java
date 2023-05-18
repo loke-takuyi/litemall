@@ -13,7 +13,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.linlinjava.litemall.wx.dto.SysUser;
+import org.linlinjava.litemall.db.config.SysUser;
 
 public class JwtHelper {
 	// 秘钥
