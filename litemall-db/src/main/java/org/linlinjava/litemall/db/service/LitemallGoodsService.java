@@ -13,10 +13,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class LitemallGoodsService {
@@ -36,7 +33,7 @@ public class LitemallGoodsService {
         example.or().andIsHotEqualTo(true).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
         example.setOrderByClause("add_time desc");
         PageHelper.startPage(offset, limit);
-        return goodsMapper.selectByExampleSelective(example, columns);
+        return goodsMapper.selectByExampleSelective(example, getCovertColumns());
     }
 
     /**
@@ -48,14 +45,14 @@ public class LitemallGoodsService {
         int length = columns.length;
         Column[] covertColumns = new Column[length];
         System.arraycopy(columns, 0, covertColumns, 0, length);
-        covertColumns[length - 1] = getCovertColumn(sysUser.getUserLevel());
+        covertColumns[length - 1] = getCovertColumn(sysUser);
         return covertColumns;
     }
 
 
-    private Column getCovertColumn(Integer userLevel) {
-
-        if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
+    private Column getCovertColumn(SysUser sysUser) {
+        Integer userLevel = Objects.isNull(sysUser) ? null : sysUser.getUserLevel();
+        if ( Objects.isNull(sysUser) || UserLevelEnum.tag_user.code.equals(userLevel)){
             return Column.tagPriceToRetailPrice;
         }
         if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
@@ -77,7 +74,7 @@ public class LitemallGoodsService {
         example.setOrderByClause("add_time desc");
         PageHelper.startPage(offset, limit);
 
-        return goodsMapper.selectByExampleSelective(example, columns);
+        return goodsMapper.selectByExampleSelective(example, getCovertColumns());
     }
 
     /**
@@ -94,7 +91,7 @@ public class LitemallGoodsService {
         example.setOrderByClause("add_time  desc");
         PageHelper.startPage(offset, limit);
 
-        return goodsMapper.selectByExampleSelective(example, columns);
+        return goodsMapper.selectByExampleSelective(example, getCovertColumns());
     }
 
 
@@ -112,7 +109,7 @@ public class LitemallGoodsService {
         example.setOrderByClause("add_time desc");
         PageHelper.startPage(offset, limit);
 
-        return goodsMapper.selectByExampleSelective(example, columns);
+        return goodsMapper.selectByExampleSelective(example, getCovertColumns());
     }
 
 
@@ -152,7 +149,7 @@ public class LitemallGoodsService {
 
         PageHelper.startPage(offset, limit);
 
-        return goodsMapper.selectByExampleSelective(example, columns);
+        return goodsMapper.selectByExampleSelective(example, getCovertColumns());
     }
 
     public List<LitemallGoods> querySelective(Integer goodsId, String goodsSn, String name, Integer page, Integer size, String sort, String order) {
@@ -199,7 +196,7 @@ public class LitemallGoodsService {
     public LitemallGoods findByIdVO(Integer id) {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andIdEqualTo(id).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
-        return goodsMapper.selectOneByExampleSelective(example, columns);
+        return goodsMapper.selectOneByExampleSelective(example, getCovertColumns());
     }
 
 
@@ -283,6 +280,6 @@ public class LitemallGoodsService {
     public List<LitemallGoods> queryByIds(Integer[] ids) {
         LitemallGoodsExample example = new LitemallGoodsExample();
         example.or().andIdIn(Arrays.asList(ids)).andIsOnSaleEqualTo(true).andDeletedEqualTo(false);
-        return goodsMapper.selectByExampleSelective(example, columns);
+        return goodsMapper.selectByExampleSelective(example, getCovertColumns());
     }
 }
