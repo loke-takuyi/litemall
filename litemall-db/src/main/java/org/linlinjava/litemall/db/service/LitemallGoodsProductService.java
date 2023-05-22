@@ -1,6 +1,6 @@
 package org.linlinjava.litemall.db.service;
 
-import org.apache.ibatis.annotations.Param;
+import org.linlinjava.litemall.db.config.WxUserThreadLocal;
 import org.linlinjava.litemall.db.dao.GoodsProductMapper;
 import org.linlinjava.litemall.db.dao.LitemallGoodsProductMapper;
 import org.linlinjava.litemall.db.domain.LitemallGoodsProduct;
@@ -57,7 +57,18 @@ public class LitemallGoodsProductService {
     }
 
     public LitemallGoodsProduct findById(Integer id) {
-        return litemallGoodsProductMapper.selectByPrimaryKey(id);
+        LitemallGoodsProduct goodsProduct = litemallGoodsProductMapper.selectByPrimaryKey(id);
+        Integer userLevel = WxUserThreadLocal.getUserLevel();
+        if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
+            goodsProduct.setPrice(goodsProduct.getTagPrice());
+        }
+        if (UserLevelEnum.retail_user.code.equals(userLevel)){
+            goodsProduct.setPrice(goodsProduct.getRetailPrice());
+        }
+        if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
+            goodsProduct.setPrice(goodsProduct.getWholesalePrice());
+        }
+        return goodsProduct;
     }
 
     public void deleteById(Integer id) {
