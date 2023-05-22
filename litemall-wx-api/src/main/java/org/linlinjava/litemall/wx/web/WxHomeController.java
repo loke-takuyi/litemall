@@ -96,9 +96,9 @@ public class WxHomeController {
         }
 
 
-        Callable<List> newGoodsListCallable = () -> goodsService.queryByNew(0, SystemConfig.getNewLimit());
-
-        Callable<List> hotGoodsListCallable = () -> goodsService.queryByHot(0, SystemConfig.getHotLimit());
+//        Callable<List> newGoodsListCallable = () -> goodsService.queryByNew(0, SystemConfig.getNewLimit());
+//
+//        Callable<List> hotGoodsListCallable = () -> goodsService.queryByHot(0, SystemConfig.getHotLimit());
 
         Callable<List> brandListCallable = () -> brandService.query(0, SystemConfig.getBrandLimit());
 
@@ -112,8 +112,8 @@ public class WxHomeController {
         FutureTask<List> bannerTask = new FutureTask<>(bannerListCallable);
         FutureTask<List> channelTask = new FutureTask<>(channelListCallable);
         FutureTask<List> couponListTask = new FutureTask<>(couponListCallable);
-        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
-        FutureTask<List> hotGoodsListTask = new FutureTask<>(hotGoodsListCallable);
+//        FutureTask<List> newGoodsListTask = new FutureTask<>(newGoodsListCallable);
+//        FutureTask<List> hotGoodsListTask = new FutureTask<>(hotGoodsListCallable);
         FutureTask<List> brandListTask = new FutureTask<>(brandListCallable);
         FutureTask<List> topicListTask = new FutureTask<>(topicListCallable);
         FutureTask<List> grouponListTask = new FutureTask<>(grouponListCallable);
@@ -122,8 +122,8 @@ public class WxHomeController {
         executorService.submit(bannerTask);
         executorService.submit(channelTask);
         executorService.submit(couponListTask);
-        executorService.submit(newGoodsListTask);
-        executorService.submit(hotGoodsListTask);
+//        executorService.submit(newGoodsListTask);
+//        executorService.submit(hotGoodsListTask);
         executorService.submit(brandListTask);
         executorService.submit(topicListTask);
         executorService.submit(grouponListTask);
@@ -134,8 +134,8 @@ public class WxHomeController {
             entity.put("banner", bannerTask.get());
             entity.put("channel", channelTask.get());
             entity.put("couponList", couponListTask.get());
-            entity.put("newGoodsList", newGoodsListTask.get());
-            entity.put("hotGoodsList", hotGoodsListTask.get());
+            entity.put("newGoodsList", goodsService.queryByNew(0, SystemConfig.getNewLimit()));
+            entity.put("hotGoodsList", goodsService.queryByHot(0, SystemConfig.getHotLimit()));
             entity.put("brandList", brandListTask.get());
             entity.put("topicList", topicListTask.get());
             entity.put("grouponList", grouponListTask.get());
