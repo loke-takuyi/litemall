@@ -55,7 +55,7 @@
           <el-upload
             :action="uploadPath"
             :headers="headers"
-            :limit="5"
+            :limit="10"
             :file-list="galleryFileList"
             :on-exceed="uploadOverrun"
             :on-success="handleGalleryUrl"
@@ -96,8 +96,21 @@
 
         <el-form-item label="商品详细介绍">
           <editor v-model="goods.detail" :init="editorInit" />
+          <el-upload
+            :action="uploadPath"
+            :headers="headers"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-success="handleDetailGoodsFileUrl"
+            multiple
+            :limit="30"
+            :file-list="detailGoodsFileList"
+          >
+            <div class="el-upload__text"><i class="el-icon-upload">批量上传图片</i> 或将文件拖到此处</div>
+          </el-upload>
         </el-form-item>
       </el-form>
+
     </el-card>
 
     <el-card class="box-card">
@@ -162,7 +175,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column property="price" label="货品售价" />
+        <el-table-column property="price" label="吊牌价格" />
+        <el-table-column property="tagPrice" width="100" label="黄金价格" />
+        <el-table-column property="retailPrice" width="100" label="铂金价格" />
+        <el-table-column property="wholesalePrice" width="100" label="钻石价格" />
         <el-table-column property="number" label="货品数量" />
         <el-table-column property="url" label="货品图片">
           <template slot-scope="scope">
@@ -183,8 +199,17 @@
               {{ tag }}
             </el-tag>
           </el-form-item>
-          <el-form-item label="货品售价" prop="price">
+          <el-form-item label="吊牌价格" prop="price">
             <el-input v-model="productForm.price" />
+          </el-form-item>
+          <el-form-item label="黄金价格" prop="tagPrice">
+            <el-input v-model="productForm.tagPrice" />
+          </el-form-item>
+          <el-form-item label="铂金价格" prop="retailPrice">
+            <el-input v-model="productForm.retailPrice" />
+          </el-form-item>
+          <el-form-item label="钻石价格" prop="wholesalePrice">
+            <el-input v-model="productForm.wholesalePrice" />
           </el-form-item>
           <el-form-item label="货品数量" prop="number">
             <el-input v-model="productForm.number" />
@@ -307,6 +332,7 @@ export default {
       newKeyword: '',
       keywords: [],
       galleryFileList: [],
+      detailGoodsFileList: [],
       categoryList: [],
       brandList: [],
       categoryIds: [],
@@ -319,11 +345,14 @@ export default {
         id: 0,
         specifications: [],
         price: 0.0,
+        tagPrice: 0.0,
+        retailPrice: 0.0,
+        wholesalePrice: 0.0,
         number: 0,
         url: ''
       },
       products: [
-        { id: 0, specifications: ['标准'], price: 0.0, number: 0, url: '' }
+        { id: 0, specifications: ['标准'], price: 0.0, tagPrice: 0.0, retailPrice: 0.0, wholesalePrice: 0.0, number: 0, url: '' }
       ],
       attributeVisiable: false,
       attributeAdd: true,
@@ -337,11 +366,11 @@ export default {
         height: '400px',
         convert_urls: false,
         plugins: [
-          'advlist anchor autolink autosave code codesample colorpicker colorpicker contextmenu directionality emoticons fullscreen hr image imagetools importcss insertdatetime link lists media nonbreaking noneditable pagebreak paste preview print save searchreplace spellchecker tabfocus table template textcolor textpattern visualblocks visualchars wordcount'
+          'advlist anchor autolink autosave code codesample colorpicker colorpicker contextmenu directionality emoticons fullscreen hr image imagetools importcss insertdatetime link lists media nonbreaking noneditable pagebreak paste preview print save searchreplace spellchecker tabfocus table template textcolor textpattern visualblocks visualchars wordcount axupimgs'
         ],
         toolbar: [
           'searchreplace bold italic underline strikethrough alignleft aligncenter alignright outdent indent  blockquote undo redo removeformat subscript superscript code codesample',
-          'hr bullist numlist link image charmap preview anchor pagebreak insertdatetime media table emoticons forecolor backcolor fullscreen'
+          'hr bullist numlist link image charmap preview anchor pagebreak insertdatetime media table emoticons forecolor backcolor fullscreen axupimgs'
         ],
         images_upload_handler: function(blobInfo, success, failure) {
           const formData = new FormData()
@@ -470,12 +499,20 @@ export default {
     uploadOverrun: function() {
       this.$message({
         type: 'error',
-        message: '上传文件个数超出限制!最多上传5张图片!'
+        message: '上传文件个数超出限制!最多上传10张图片!'
       })
     },
     handleGalleryUrl(response, file, fileList) {
       if (response.errno === 0) {
         this.goods.gallery.push(response.data.url)
+      }
+    },
+    handleDetailGoodsFileUrl(response, file, fileList) {
+      if (response.errno === 0) {
+        const tempUrl = response.data.url
+        const detailTemp = `<p><img src="${tempUrl}" _src="${tempUrl}"/><br/></p>`
+        this.goods.detail = this.goods.detail + detailTemp
+        console.log(this.goods.detail)
       }
     },
     handleRemove: function(file, fileList) {

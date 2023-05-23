@@ -51,7 +51,7 @@
         <el-form-item label="宣传画廊">
           <el-upload
             :action="uploadPath"
-            :limit="5"
+            :limit="10"
             :headers="headers"
             :on-exceed="uploadOverrun"
             :on-success="handleGalleryUrl"
@@ -100,6 +100,18 @@
 
         <el-form-item label="商品详细介绍">
           <editor v-model="goods.detail" :init="editorInit" />
+          <el-upload
+            :action="uploadPath"
+            :headers="headers"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-success="handleDetailGoodsFileUrl"
+            multiple
+            :limit="30"
+            :file-list="detailGoodsFileList"
+          >
+            <div class="el-upload__text"><i class="el-icon-upload">批量上传图片</i> 或将文件拖到此处</div>
+          </el-upload>
         </el-form-item>
       </el-form>
     </el-card>
@@ -192,7 +204,10 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column property="price" width="100" label="货品售价" />
+        <el-table-column property="price" width="100" label="吊牌价格" />
+        <el-table-column property="tagPrice" width="100" label="黄金价格" />
+        <el-table-column property="retailPrice" width="100" label="铂金价格" />
+        <el-table-column property="wholesalePrice" width="100" label="钻石价格" />
         <el-table-column property="number" width="100" label="货品数量" />
         <el-table-column property="url" width="100" label="货品图片">
           <template slot-scope="scope">
@@ -220,8 +235,17 @@
               {{ tag }}
             </el-tag>
           </el-form-item>
-          <el-form-item label="货品售价" prop="price">
+          <el-form-item label="吊牌价格" prop="price">
             <el-input v-model="productForm.price" />
+          </el-form-item>
+          <el-form-item label="黄金价格" prop="tagPrice">
+            <el-input v-model="productForm.tagPrice" />
+          </el-form-item>
+          <el-form-item label="铂金价格" prop="retailPrice">
+            <el-input v-model="productForm.retailPrice" />
+          </el-form-item>
+          <el-form-item label="钻石价格" prop="wholesalePrice">
+            <el-input v-model="productForm.wholesalePrice" />
           </el-form-item>
           <el-form-item label="货品数量" prop="number">
             <el-input v-model="productForm.number" />
@@ -353,6 +377,7 @@ export default {
       newKeywordVisible: false,
       newKeyword: '',
       keywords: [],
+      detailGoodsFileList: [],
       categoryList: [],
       brandList: [],
       goods: { picUrl: '', gallery: [], isHot: false, isNew: true, isOnSale: true },
@@ -459,12 +484,20 @@ export default {
     uploadOverrun: function() {
       this.$message({
         type: 'error',
-        message: '上传文件个数超出限制!最多上传5张图片!'
+        message: '上传文件个数超出限制!最多上传10张图片!'
       })
     },
     handleGalleryUrl(response, file, fileList) {
       if (response.errno === 0) {
         this.goods.gallery.push(response.data.url)
+      }
+    },
+    handleDetailGoodsFileUrl(response, file, fileList) {
+      if (response.errno === 0) {
+        const tempUrl = response.data.url
+        const detailTemp = `<p><img src="${tempUrl}" _src="${tempUrl}"/><br/></p>`
+        this.goods.detail = this.goods.detail + detailTemp
+        console.log(this.goods.detail)
       }
     },
     handleRemove: function(file, fileList) {
@@ -571,7 +604,7 @@ export default {
           var z = specValues[x][combination[x]]
           specifications.push(this.specifications[z].value)
         }
-        products[productsIndex] = { id: productsIndex, specifications: specifications, price: 0.00, number: 0, url: '' }
+        products[productsIndex] = { id: productsIndex, specifications: specifications, price: 0.00, tagPrice: 0.00, number: 0, url: '' }
         productsIndex++
 
         index++
