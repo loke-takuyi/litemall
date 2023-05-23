@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class LitemallGoodsProductService {
@@ -30,7 +30,7 @@ public class LitemallGoodsProductService {
         return litemallGoodsProductMapper.selectByExample(example);
     }
 
-    public List<LitemallGoodsProductVo> queryVoByGid(Integer gid, Integer userLevel) {
+    public List<LitemallGoodsProductVo> queryVoByGid(Integer gid) {
         List<LitemallGoodsProduct> goodsProducts = queryByGid(gid);
         if (CollectionUtils.isEmpty(goodsProducts)){
             return null;
@@ -40,16 +40,7 @@ public class LitemallGoodsProductService {
             LitemallGoodsProductVo goodsProductVo = new LitemallGoodsProductVo();
             productVos.add(goodsProductVo);
             BeanUtils.copyProperties(goodsProduct, goodsProductVo);
-            if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
-                goodsProductVo.setPrice(goodsProduct.getTagPrice());
-            }
-            if (UserLevelEnum.retail_user.code.equals(userLevel)){
-                goodsProductVo.setPrice(goodsProduct.getRetailPrice());
-            }
-            if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
-                goodsProductVo.setPrice(goodsProduct.getWholesalePrice());
-            }
-
+            goodsProductVo.setPrice(getCovertPrice(goodsProduct));
         });
 
         return productVos;
@@ -58,17 +49,20 @@ public class LitemallGoodsProductService {
 
     public LitemallGoodsProduct findById(Integer id) {
         LitemallGoodsProduct goodsProduct = litemallGoodsProductMapper.selectByPrimaryKey(id);
+        goodsProduct.setPrice(getCovertPrice(goodsProduct));
+        return goodsProduct;
+    }
+
+    private BigDecimal getCovertPrice(LitemallGoodsProduct goodsProduct) {
         Integer userLevel = WxUserThreadLocal.getUserLevel();
-        if (UserLevelEnum.tag_user.code.equals(userLevel) || Objects.isNull(userLevel)){
-            goodsProduct.setPrice(goodsProduct.getTagPrice());
+        if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
+            return goodsProduct.getWholesalePrice();
         }
         if (UserLevelEnum.retail_user.code.equals(userLevel)){
-            goodsProduct.setPrice(goodsProduct.getRetailPrice());
+            return goodsProduct.getRetailPrice();
         }
-        if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
-            goodsProduct.setPrice(goodsProduct.getWholesalePrice());
-        }
-        return goodsProduct;
+        return goodsProduct.getTagPrice();
+
     }
 
     public void deleteById(Integer id) {

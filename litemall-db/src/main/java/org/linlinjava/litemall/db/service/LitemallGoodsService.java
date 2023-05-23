@@ -53,13 +53,16 @@ public class LitemallGoodsService {
 
     private Column getCovertColumn() {
         Integer userLevel = WxUserThreadLocal.getUserLevel();
-        if ( Objects.isNull(userLevel) || UserLevelEnum.tag_user.code.equals(userLevel)){
-            return Column.tagPriceToRetailPrice;
-        }
+        //钻石会员价
         if (UserLevelEnum.wholesale_user.code.equals(userLevel)){
             return Column.wholesalePriceToRetailPrice;
         }
-        return Column.retailPrice;
+        //铂金会员价
+        if (UserLevelEnum.retail_user.code.equals(userLevel)){
+            return Column.retailPrice;
+        }
+        //黄金会员价
+        return Column.tagPriceToRetailPrice;
     }
 
     /**

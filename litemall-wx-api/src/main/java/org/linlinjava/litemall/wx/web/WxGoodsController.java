@@ -106,7 +106,7 @@ public class WxGoodsController {
 		Callable<Object> objectCallable = () -> goodsSpecificationService.getSpecificationVoList(id);
 
 		// 商品规格对应的数量和价格
-		Callable<List> productListCallable = () -> productService.queryVoByGid(id, userLevel);
+		Callable<List> productListCallable = () -> productService.queryVoByGid(id);
 
 		// 商品问题，这里是一些通用问题
 		Callable<List> issueCallable = () -> goodsIssueService.querySelective("", 1, 4, "", "");
