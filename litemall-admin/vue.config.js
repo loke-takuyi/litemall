@@ -31,9 +31,10 @@ module.exports = {
   devServer: {
     proxy: {
       '/admin': {
-        target: 'http://localhost:8080'
-      },
+        target: 'http://192.168.20.36:8080'
+      }
     },
+    disableHostCheck: true,
     port: port,
     open: true,
     overlay: {
